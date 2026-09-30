@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>JHYT Generator v7</title>
+<style>
+:root{--bg:#0f0f0f;--panel:#181818;--panel2:#212121;--line:#2e2e2e;--txt:#f1f1f1;--mut:#aaa;--dim:#777;--red:#ff0000;--green:#22c55e;--amber:#f59e0b;--blue:#0ea5e9;--purple:#a855f7}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);background-image:radial-gradient(circle at 20% 0%,#1f0000 0%,var(--bg) 60%);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,Inter,system-ui,sans-serif;font-size:13px;padding:14px;max-width:860px;margin:0 auto;min-height:100vh}
+h1{font-size:17px;margin:0 0 3px;display:flex;align-items:center;gap:10px}
+h1 .logo{width:32px;height:32px;background:linear-gradient(135deg,var(--red),#a00);border-radius:9px;display:grid;place-items:center;font-size:15px;font-weight:800;box-shadow:0 4px 14px rgba(255,0,0,.3)}
+p.sub{color:var(--dim);font-size:11px;margin:0 0 16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+.card h2{font-size:12.5px;margin:0 0 12px;display:flex;align-items:center;gap:8px;font-weight:700}
+.step{width:20px;height:20px;border-radius:99px;background:rgba(255,0,0,.15);color:var(--red);font-size:10px;font-weight:800;display:grid;place-items:center;flex-shrink:0}
+.step.blue{background:rgba(14,165,233,.15);color:var(--blue)}
+.step.purple{background:rgba(168,85,247,.15);color:var(--purple)}
+.drop{border:2px dashed var(--line);border-radius:10px;padding:26px 14px;text-align:center;background:var(--panel2);cursor:pointer;transition:.15s}
+.drop:hover,.drop.drag{border-color:var(--red);background:rgba(255,0,0,.05)}
+.drop .ico{font-size:34px;margin-bottom:6px;line-height:1}
+.drop .t{font-weight:600;font-size:12.5px;margin-bottom:2px}
+.drop .s{font-size:10.5px;color:var(--dim)}
+input[type=text],input[type=number],textarea{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:10px;font-size:12.5px;font-family:inherit;margin-top:6px}
+textarea{font-size:12.5px;min-height:60px;resize:vertical;line-height:1.6;font-family:-apple-system,Inter,sans-serif}
+textarea.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;line-height:1.5}
+input:focus,textarea:focus{outline:none;border-color:var(--red);box-shadow:0 0 0 2px rgba(255,0,0,.15)}
+label{display:block;font-size:10.5px;color:var(--mut);margin-bottom:4px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+button{padding:11px 14px;border-radius:10px;border:none;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;transition:.15s;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+button:disabled{opacity:.4;cursor:not-allowed}
+.btn-red{background:linear-gradient(135deg,var(--red),#a00);color:#fff;width:100%;padding:13px;font-size:13px}
+.btn-red:active:not(:disabled){filter:brightness(1.15)}
+.btn-green{background:var(--green);color:#fff;width:100%;padding:13px;font-size:13px}
+.btn-green:active:not(:disabled){filter:brightness(1.15)}
+.btn-blue{background:linear-gradient(135deg,var(--blue),#0284c7);color:#fff;width:100%;padding:13px;font-size:13px}
+.btn-blue:active:not(:disabled){filter:brightness(1.15)}
+.btn-purple{background:linear-gradient(135deg,var(--purple),#7c3aed);color:#fff;width:100%;padding:13px;font-size:13px}
+.btn-purple:active:not(:disabled){filter:brightness(1.15)}
+.btn-gray{background:var(--panel2);color:var(--txt);border:1px solid var(--line);font-weight:600}
+.btn-small{padding:8px 12px;font-size:11px;border-radius:7px}
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:480px){.row2{grid-template-columns:1fr}}
+.var-btn{display:inline-block;padding:4px 9px;margin:2px 2px 6px 0;font-size:11px;background:var(--panel2);border:1px solid var(--line);border-radius:6px;color:#93c5fd;cursor:pointer;font-family:ui-monospace,monospace;user-select:none}
+.var-btn:active{background:#2a2a2a}
+.info{font-size:11px;color:var(--dim);margin-top:8px;line-height:1.6}
+.info.warn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);color:#fcd34d;padding:10px;border-radius:8px}
+.info.ok{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);color:#86efac;padding:10px;border-radius:8px}
+.info.err{background:rgba(255,0,0,.08);border:1px solid rgba(255,0,0,.25);color:#fca5a5;padding:10px;border-radius:8px}
+.info.blue{background:rgba(14,165,233,.08);border:1px solid rgba(14,165,233,.25);color:#7dd3fc;padding:10px;border-radius:8px}
+.info.purple{background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.25);color:#d8b4fe;padding:10px;border-radius:8px}
+.status{padding:10px 12px;border-radius:8px;font-size:11.5px;margin-top:10px;display:none;font-weight:500;line-height:1.5}
+.status.ok{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:#86efac;display:block}
+.status.err{background:rgba(255,0,0,.1);border:1px solid rgba(255,0,0,.3);color:#fca5a5;display:block}
+pre{white-space:pre-wrap;word-break:break-all;background:#0a0a0a;border:1px solid var(--line);padding:10px;border-radius:8px;max-height:200px;overflow:auto;font-size:9.5px;color:#a5f3fc;font-family:ui-monospace,monospace;margin-top:10px;display:none;line-height:1.4}
+.pill{display:inline-block;font-size:10px;padding:3px 9px;border-radius:99px;background:rgba(34,197,94,.15);color:#86efac;font-weight:600}
+
+/* Recorder box */
+.recorder-box{background:linear-gradient(135deg,rgba(14,165,233,.08),rgba(14,165,233,.02));border:1px solid rgba(14,165,233,.3);border-radius:12px;padding:14px;margin-top:12px}
+.recorder-box .title{font-size:13px;font-weight:800;color:#7dd3fc;display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.recorder-box .desc{font-size:11px;color:#aaa;line-height:1.6;margin-bottom:12px}
+.recorder-box .actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.recorder-box .actions button{padding:11px;font-size:12px}
+.step-num{display:inline-block;width:16px;height:16px;background:var(--blue);color:#fff;border-radius:99px;text-align:center;line-height:16px;font-size:10px;font-weight:700;margin-right:4px}
+
+/* Setup box */
+.setup-box{background:linear-gradient(135deg,rgba(255,0,0,.06),rgba(255,0,0,.02));border:1px solid rgba(255,0,0,.2);border-radius:12px;padding:14px}
+.num-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.num-lbl{font-size:12px;color:var(--txt);font-weight:600;flex:1;min-width:120px}
+.num-selector{display:flex;align-items:center;gap:8px}
+.num-btn{width:42px;height:42px;border-radius:10px;background:var(--panel2);border:1px solid var(--line);color:#fff;font-size:22px;font-weight:700;cursor:pointer;padding:0;display:grid;place-items:center;user-select:none}
+.num-btn:active{background:#333}
+.num-input{width:65px;height:42px;background:var(--panel2);border:2px solid var(--red);border-radius:10px;color:#fff;font-size:19px;font-weight:800;text-align:center;font-family:inherit;padding:0;outline:none}
+.num-input::-webkit-outer-spin-button,.num-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+
+/* Comment list */
+.comments-list{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.cmt{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px;transition:.15s}
+.cmt:focus-within{border-color:rgba(255,0,0,.4)}
+.cmt-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.cmt-num{font-size:10.5px;color:var(--red);font-weight:800;background:rgba(255,0,0,.1);padding:2px 8px;border-radius:99px}
+.cmt-len{font-size:9.5px;color:var(--dim)}
+.cmt textarea{margin-top:0;min-height:50px;padding:9px 11px;font-size:12.5px;background:#0f0f0f}
+.cmt-var{font-size:9.5px;color:var(--dim);margin-top:5px;font-family:ui-monospace,monospace}
+
+/* Big stats */
+.big-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+@media(max-width:480px){.big-stats{grid-template-columns:repeat(2,1fr)}}
+.stat-card{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 10px;text-align:center}
+.stat-card .num{font-size:22px;font-weight:800;color:#fff;line-height:1}
+.stat-card .lbl{font-size:9.5px;color:var(--dim);margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+.stat-card.red .num{color:var(--red)}
+.stat-card.green .num{color:var(--green)}
+
+.event-summary{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px;margin-top:12px}
+.event-summary .stat-line{display:flex;justify-content:space-between;padding:5px 0;font-size:11.5px;border-bottom:1px solid #262626}
+.event-summary .stat-line:last-child{border-bottom:none}
+.event-summary .stat-line b{color:#fff;font-weight:700}
+.event-summary .stat-line .val{color:var(--red);font-weight:800}
+
+.event-preview-small{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.ev-mini{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:10.5px;color:var(--mut)}
+.ev-mini b{color:var(--green);font-weight:700}
+
+.footer{text-align:center;font-size:10px;color:#444;padding:14px 0 6px}
+</style>
+</head>
+<body>
+
+<h1><span class="logo">▶</span> JHYT Generator v7</h1>
+<p class="sub">Recorder + Player terpisah • Auto chat YouTube Live</p>
+
+<!-- ============ STEP 1: RECORDER ============ -->
+<div class="card">
+<h2><span class="step blue">1</span> JHYT RECORDER (Opsional)</h2>
+<div class="info blue" style="margin-bottom:12px">
+🎙️ <b>Rekam selector</b> kalau YouTube ubah UI. Kalau tidak ada perubahan, langsung pakai default sudah bisa.
+</div>
+
+<div class="recorder-box">
+<div class="title">🎙️ JHYT RECORDER v1</div>
+<div class="desc">
+Userscript untuk <b>rekam aksi manual</b> di YouTube live chat. Install ke Tampermonkey, buka YouTube, tap RECORD, lakukan aksi manual (tap kolom chat → ketik → tap Send), lalu STOP.
+</div>
+<div class="actions">
+<button class="btn-blue" id="btnCopyRecorder">📋 Copy Recorder</button>
+<button class="btn-blue" id="btnSaveRecorder">💾 Save .js</button>
+</div>
+<div class="info" style="margin-top:10px">
+<b>Langkah:</b>
+<span style="display:block;margin-top:6px;line-height:2">
+<span class="step-num">1</span> Klik <b>Copy Recorder</b><br>
+<span class="step-num">2</span> Buka Tampermonkey → <b>Buat skrip baru</b> → Paste → Save<br>
+<span class="step-num">3</span> Buka YouTube live chat → panel <b>🎙️ JHYT REC</b> muncul → klik RECORD<br>
+<span class="step-num">4</span> Tap kolom chat → ketik "test" → tap Send → klik STOP<br>
+<span class="step-num">5</span> Klik <b>Copy Steps</b> di panel recorder<br>
+<span class="step-num">6</span> Paste JSON di field di bawah ini
+</span>
+</div>
+</div>
+
+<label style="margin-top:14px">JSON Steps Hasil Rekaman</label>
+<textarea id="customSteps" class="mono" placeholder='[{"type":"TYPE","selector":"#input","value":"MESSAGE_CONTENT"},{"type":"CLICK","selector":"YT_SEND_BUTTON_REAL","value":""}]' style="min-height:80px"></textarea>
+<div class="info">
+Kosongkan untuk pakai default (tested di HP & desktop). Isi hanya kalau default gagal karena YouTube ubah UI.
+</div>
+</div>
+
+<!-- ============ STEP 2: CSV ============ -->
+<div class="card">
+<h2><span class="step">2</span> Upload CSV dari Tool Upload</h2>
+<div class="drop" id="drop">
+<div class="ico">📄</div>
+<div class="t">Tap untuk pilih file CSV</div>
+<div class="s">Support 500+ event • kolom: title, date, time, videoId, url_chat</div>
+</div>
+<input type="file" id="file" accept=".csv,.txt" style="display:none">
+<div class="status" id="status"></div>
+</div>
+
+<!-- ============ STEP 3: KOMENTAR ============ -->
+<div class="card" id="step3" style="display:none">
+<h2><span class="step">3</span> Isi Komentar (Universal)</h2>
+
+<div class="info">
+Pilih berapa komentar yang akan dikirim <b>ke setiap ID</b>. Satu template, otomatis pakai ke semua event.
+</div>
+
+<div class="setup-box">
+<div class="num-row">
+<div class="num-lbl">Jumlah komentar per event</div>
+<div class="num-selector">
+<button class="num-btn" id="numMinus">−</button>
+<input type="number" class="num-input" id="cmtCount" value="2" min="1" max="20" readonly>
+<button class="num-btn" id="numPlus">+</button>
+</div>
+</div>
+</div>
+
+<label style="margin-top:14px">Variable yang tersedia (klik untuk insert)</label>
+<div>
+<span class="var-btn" data-var="{title}">{title}</span>
+<span class="var-btn" data-var="{date}">{date}</span>
+<span class="var-btn" data-var="{time}">{time}</span>
+<span class="var-btn" data-var="{videoId}">{videoId}</span>
+</div>
+
+<div class="comments-list" id="commentsList"></div>
+</div>
+
+<!-- ============ STEP 4: PREVIEW ============ -->
+<div class="card" id="step4" style="display:none">
+<h2><span class="step">4</span> Preview & Estimasi</h2>
+
+<div class="big-stats">
+<div class="stat-card">
+<div class="num" id="statEvents">0</div>
+<div class="lbl">Event</div>
+</div>
+<div class="stat-card">
+<div class="num" id="statComments">0</div>
+<div class="lbl">Komentar/Event</div>
+</div>
+<div class="stat-card red">
+<div class="num" id="statTotal">0</div>
+<div class="lbl">Total Pesan</div>
+</div>
+<div class="stat-card">
+<div class="num" id="statTime">0m</div>
+<div class="lbl">Estimasi Waktu</div>
+</div>
+<div class="stat-card green">
+<div class="num" id="statRate">0/m</div>
+<div class="lbl">Rate</div>
+</div>
+<div class="stat-card">
+<div class="num" id="statSize">0 KB</div>
+<div class="lbl">Ukuran Script</div>
+</div>
+</div>
+
+<div class="event-summary">
+<div class="stat-line"><span>Event dari CSV</span><b id="sumEvents">0</b></div>
+<div class="stat-line"><span>Komentar yang diisi</span><b id="sumComments">0</b></div>
+<div class="stat-line"><span>Total pesan terkirim</span><span class="val" id="sumTotal">0</span></div>
+<div class="stat-line"><span>Delay antar pesan</span><b id="sumDelay">10s</b></div>
+<div class="stat-line"><span>Estimasi durasi</span><span class="val" id="sumTime">0 menit</span></div>
+</div>
+
+<div id="warningBox"></div>
+
+<div class="info" style="margin-top:12px">
+Menampilkan <b>10 event pertama</b> (dari <span id="totalEvents2">0</span> event):
+</div>
+<div class="event-preview-small" id="eventPreviewMini"></div>
+</div>
+
+<!-- ============ STEP 5: GENERATE ============ -->
+<div class="card" id="step5" style="display:none">
+<h2><span class="step">5</span> Generate Player Script</h2>
+<div class="row2">
+<div>
+<label>Delay antar komentar (detik)</label>
+<input type="number" id="delay" value="10" min="5" max="300">
+</div>
+<div>
+<label>Max tunggu input (detik)</label>
+<input type="number" id="maxwait" value="45" min="10" max="300">
+</div>
+</div>
+<button class="btn-red" id="btnGen" style="margin-top:12px">⚡ GENERATE PLAYER SCRIPT</button>
+<div class="btn-row" id="actions" style="display:none">
+<button class="btn-green" id="btnCopy">📋 COPY PLAYER</button>
+<button class="btn-gray" id="btnSave">💾 SAVE .JS</button>
+</div>
+<div id="genInfo" class="status"></div>
+<pre id="out">Belum di-generate...</pre>
+</div>
+
+<!-- ============ CARA PAKAI ============ -->
+<div class="card">
+<h2><span class="step">?</span> Alur Lengkap</h2>
+<div class="info" style="font-size:11.5px;line-height:2;color:var(--mut)">
+<b style="color:#7dd3fc">Jalur A — Default (tanpa rekam):</b><br>
+1. Upload CSV → 2. Set komentar → 3. Generate → 4. Copy Player → 5. Paste Tampermonkey → 6. PLAY<br><br>
+<b style="color:#7dd3fc">Jalur B — Dengan rekam (kalau default gagal):</b><br>
+1. Copy Recorder → Paste Tampermonkey<br>
+2. Rekam di YouTube (RECORD → tap → STOP)<br>
+3. Copy JSON → Paste ke Step 1<br>
+4. Upload CSV → Set komentar → Generate → Copy Player<br>
+5. Paste Player ke Tampermonkey → Save → PLAY
+</div>
+<div class="info warn" style="margin-top:10px">
+⚠️ <b>Untuk HP:</b> jangan lock layar, jangan switch app selama PLAY. Colok charger kalau >200 pesan.
+</div>
+</div>
+
+<div class="footer">JHYT Generator v7 • recorder + player terpisah</div>
+
+<script>
+(function(){
+  "use strict";
+  var $ = id => document.getElementById(id);
+  var state = { events: [], comments: [""] };
+
+  // ============================================================
+  // RECORDER SOURCE (embedded)
+  // ============================================================
+  var RECORDER_SOURCE = '// ==UserScript==\n' +
+'// @name         JHYT RECORDER\n' +
+'// @namespace    jhyt-recorder\n' +
+'// @version      1.0\n' +
+'// @description  Rekam aksi chat YouTube untuk JHYT Generator\n' +
+'// @match        *://*.youtube.com/*\n' +
+'// @match        *://youtube.com/*\n' +
+'// @grant        none\n' +
+'// @run-at       document-idle\n' +
+'// @noframes\n' +
+'// ==/UserScript==\n' +
+'\n' +
+'(function(){\n' +
+'"use strict";\n' +
+'var REC = [];\n' +
+'var IS_REC = false;\n' +
+'var sleep = function(m){ return new Promise(function(r){ setTimeout(r, m); }); };\n' +
+'\n' +
+'function el(t,s,x){ var e=document.createElement(t); if(s) e.style.cssText=s; if(x!==undefined) e.textContent=x; return e; }\n' +
+'function inOwnUI(n){ if(!n) return false; while(n){ if(n.id==="jhyt-rec") return true; n=n.parentNode||(n.host?n.host:null); } return false; }\n' +
+'\n' +
+'function findInput(){\n' +
+'  var sels = [\'div#input[contenteditable="true"]\', \'div#input[contenteditable=""]\', \'div#input\', \'yt-live-chat-message-input-renderer [contenteditable]\', \'[contenteditable="true"]\'];\n' +
+'  for(var i=0;i<sels.length;i++){ try{ var list=document.querySelectorAll(sels[i]); for(var j=0;j<list.length;j++){ var e=list[j]; if(!e.isConnected) continue; if(inOwnUI(e)) continue; if(e.closest && e.closest("svg")) continue; if(e.tagName==="DIV" && e.id==="input") return e; if(e.closest && e.closest("yt-live-chat-message-input-renderer")) return e; } }catch(err){} }\n' +
+'  var inp = document.querySelector("div#input");\n' +
+'  if(inp && !inp.closest("svg")) return inp;\n' +
+'  return null;\n' +
+'}\n' +
+'function findSend(){\n' +
+'  var sels = [\'yt-live-chat-message-input-renderer #send-button button\', \'yt-live-chat-message-input-renderer #send-button\', \'#send-button button\', \'#send-button\', \'button[aria-label*="Send"]\', \'button[aria-label*="Kirim"]\'];\n' +
+'  for(var i=0;i<sels.length;i++){ try{ var list=document.querySelectorAll(sels[i]); for(var j=0;j<list.length;j++){ if(list[j].isConnected && !list[j].closest("svg")) return list[j]; } }catch(err){} }\n' +
+'  return null;\n' +
+'}\n' +
+'\n' +
+'async function autoDetect(){\n' +
+'  if(!IS_REC) return;\n' +
+'  // Cek apakah ada input chat visible\n' +
+'  var inp = findInput();\n' +
+'  var send = findSend();\n' +
+'  \n' +
+'  if(inp && !REC.some(function(s){ return s.role === "INPUT"; })){\n' +
+'    REC.push({ type: "TYPE", role: "INPUT", selector: "#input", value: "MESSAGE_CONTENT" });\n' +
+'    updateLog();\n' +
+'    updateStatus("✓ INPUT terdeteksi");\n' +
+'  }\n' +
+'  if(send && !REC.some(function(s){ return s.role === "SEND"; })){\n' +
+'    REC.push({ type: "CLICK", role: "SEND", selector: "YT_SEND_BUTTON_REAL", value: "" });\n' +
+'    updateLog();\n' +
+'    updateStatus("✓ SEND terdeteksi");\n' +
+'  }\n' +
+'}\n' +
+'\n' +
+'function updateLog(){\n' +
+'  var l = document.getElementById("jhyt-rec-log");\n' +
+'  if(!l) return;\n' +
+'  l.textContent = REC.map(function(s,i){ return (i+1) + ". " + s.type + " " + (s.role||""); }).join("\\n") || "Belum ada";\n' +
+'  var c = document.getElementById("jhyt-rec-count");\n' +
+'  if(c) c.textContent = REC.length;\n' +
+'}\n' +
+'function updateStatus(msg){\n' +
+'  var s = document.getElementById("jhyt-rec-status");\n' +
+'  if(s) s.textContent = msg;\n' +
+'}\n' +
+'\n' +
+'function makeUI(){\n' +
+'  if(document.getElementById("jhyt-rec")) return;\n' +
+'  if(!document.body) return;\n' +
+'  var d = el("div", "position:fixed;left:12px;bottom:80px;z-index:999999;background:#141414;border:2px solid #0ea5e9;border-radius:12px;width:280px;max-width:82vw;color:#fff;font-family:-apple-system,sans-serif;font-size:12px;box-shadow:0 8px 24px rgba(0,0,0,.5);user-select:none;");\n' +
+'  d.id = "jhyt-rec";\n' +
+'  var h = el("div", "padding:8px 10px;background:#1a1a1a;border-radius:12px 12px 0 0;display:flex;justify-content:space-between;align-items:center;cursor:grab;touch-action:none;");\n' +
+'  h.appendChild(el("b", "font-size:11px", "🎙️ JHYT REC"));\n' +
+'  var cnt = el("span", "font-size:9px;color:#0ea5e9;font-weight:800;", "0");\n' +
+'  cnt.id = "jhyt-rec-count";\n' +
+'  h.appendChild(cnt);\n' +
+'  d.appendChild(h);\n' +
+'  var body = el("div", "padding:10px");\n' +
+'  var st = el("div", "font-size:10px;color:#0ea5e9;margin-bottom:6px;min-height:14px;", "Klik START untuk mulai");\n' +
+'  st.id = "jhyt-rec-status";\n' +
+'  body.appendChild(st);\n' +
+'  var logBox = el("div", "font-size:9px;color:#666;background:#0a0a0a;border-radius:6px;padding:6px;max-height:80px;overflow:auto;white-space:pre-wrap;font-family:ui-monospace,monospace;margin-bottom:8px;", "Belum ada");\n' +
+'  logBox.id = "jhyt-rec-log";\n' +
+'  body.appendChild(logBox);\n' +
+'  var btnRow = el("div", "display:flex;gap:4px;");\n' +
+'  var startBtn = el("button", "flex:1;padding:8px;background:#22c55e;color:#fff;border:0;border-radius:6px;font-weight:800;font-size:11px;cursor:pointer;", "▶ START");\n' +
+'  var stopBtn = el("button", "flex:1;padding:8px;background:#ef4444;color:#fff;border:0;border-radius:6px;font-weight:800;font-size:11px;cursor:pointer;", "⏹ STOP");\n' +
+'  btnRow.appendChild(startBtn);\n' +
+'  btnRow.appendChild(stopBtn);\n' +
+'  body.appendChild(btnRow);\n' +
+'  var btnRow2 = el("div", "display:flex;gap:4px;margin-top:6px;");\n' +
+'  var copyBtn = el("button", "flex:1;padding:8px;background:#0ea5e9;color:#fff;border:0;border-radius:6px;font-weight:700;font-size:11px;cursor:pointer;", "📋 Copy Steps");\n' +
+'  var clrBtn = el("button", "padding:8px 12px;background:#222;color:#fca5a5;border:1px solid #333;border-radius:6px;font-size:11px;cursor:pointer;", "🗑");\n' +
+'  var clsBtn = el("button", "padding:8px 12px;background:#222;color:#fff;border:1px solid #333;border-radius:6px;font-size:11px;cursor:pointer;", "X");\n' +
+'  btnRow2.appendChild(copyBtn);\n' +
+'  btnRow2.appendChild(clrBtn);\n' +
+'  btnRow2.appendChild(clsBtn);\n' +
+'  body.appendChild(btnRow2);\n' +
+'  var tip = el("div", "font-size:9px;color:#555;margin-top:6px;line-height:1.5;", "Tips: cukup tap kolom chat sekali, sistem auto-deteksi input & send.");\n' +
+'  body.appendChild(tip);\n' +
+'  d.appendChild(body);\n' +
+'  document.body.appendChild(d);\n' +
+'\n' +
+'  // Drag\n' +
+'  var drag=false,sx=0,sy=0,sl=0,st2=0;\n' +
+'  h.addEventListener("pointerdown",function(e){ if(e.target.tagName==="BUTTON") return; drag=true; sx=e.clientX; sy=e.clientY; var r=d.getBoundingClientRect(); sl=r.left; st2=r.top; try{h.setPointerCapture(e.pointerId);}catch(err){} e.preventDefault(); });\n' +
+'  h.addEventListener("pointermove",function(e){ if(!drag) return; d.style.left=(sl+e.clientX-sx)+"px"; d.style.top=(st2+e.clientY-sy)+"px"; d.style.right="auto"; d.style.bottom="auto"; });\n' +
+'  h.addEventListener("pointerup",function(){ drag=false; });\n' +
+'  h.addEventListener("pointercancel",function(){ drag=false; });\n' +
+'\n' +
+'  startBtn.onclick = async function(){\n' +
+'    REC = [];\n' +
+'    IS_REC = true;\n' +
+'    updateLog();\n' +
+'    updateStatus("🔴 Merekam... tap kolom chat di halaman");\n' +
+'    var iv = setInterval(function(){ if(!IS_REC){ clearInterval(iv); return; } autoDetect(); }, 500);\n' +
+'  };\n' +
+'  stopBtn.onclick = function(){\n' +
+'    IS_REC = false;\n' +
+'    updateStatus("✓ Selesai. " + REC.length + " step. Klik Copy Steps.");\n' +
+'  };\n' +
+'  clrBtn.onclick = function(){ REC = []; updateLog(); updateStatus("Dibersihkan"); };\n' +
+'  clsBtn.onclick = function(){ d.remove(); };\n' +
+'  copyBtn.onclick = async function(){\n' +
+'    var json = JSON.stringify(REC, null, 2);\n' +
+'    try { await navigator.clipboard.writeText(json); updateStatus("✅ Copied! Paste di Generator"); }\n' +
+'    catch(e){ prompt("Copy manual:", json); }\n' +
+'  };\n' +
+'}\n' +
+'\n' +
+'function boot(){ makeUI(); }\n' +
+'if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);\n' +
+'else boot();\n' +
+'setTimeout(boot, 1000);\n' +
+'setTimeout(boot, 3000);\n' +
+'console.log("[JHYT RECORDER] Ready");\n' +
+'})();\n';
+
+  // ============================================================
+  // RECORDER BUTTONS
+  // ============================================================
+  $("btnCopyRecorder").addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(RECORDER_SOURCE);
+      var b = $("btnCopyRecorder"), old = b.textContent;
+      b.textContent = "✅ Recorder Tersalin!";
+      setTimeout(() => b.textContent = old, 2000);
+    } catch(e){
+      prompt("Copy manual:", RECORDER_SOURCE);
+    }
+  });
+
+  $("btnSaveRecorder").addEventListener("click", () => {
+    var blob = new Blob([RECORDER_SOURCE], { type: "text/javascript;charset=utf-8" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "JHYT_RECORDER.user.js";
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  });
+
+  // ============================================================
+  // CSV PARSER
+  // ============================================================
+  function parseCSV(text){
+    text = String(text).replace(/^\uFEFF/, "");
+    var out = [], row = [], cur = "", inQ = false;
+    for(var i=0;i<text.length;i++){
+      var ch = text[i];
+      if(inQ){
+        if(ch === '"'){ if(text[i+1] === '"'){ cur += '"'; i++; } else inQ = false; }
+        else cur += ch;
+      } else if(ch === '"'){ inQ = true; }
+      else if(ch === ','){ row.push(cur); cur = ""; }
+      else if(ch === '\n' || ch === '\r'){
+        if(ch === '\r' && text[i+1] === '\n') i++;
+        row.push(cur); cur = "";
+        if(row.some(c => String(c).trim())) out.push(row);
+        row = [];
+      } else cur += ch;
+    }
+    row.push(cur);
+    if(row.some(c => String(c).trim())) out.push(row);
+    return out;
+  }
+
+  function toObjects(text){
+    var rows = parseCSV(text);
+    if(rows.length < 2) return [];
+    var head = rows[0].map(h => String(h||"").trim().toLowerCase().replace(/\s+/g,""));
+    var out = [];
+    for(var i=1;i<rows.length;i++){
+      var o = {};
+      head.forEach((h, idx) => { o[h] = String(rows[i][idx] !== undefined ? rows[i][idx] : "").trim(); });
+      if(Object.values(o).some(v => v)) out.push(o);
+    }
+    return out;
+  }
+
+  function pick(o, keys){
+    for(var i=0;i<keys.length;i++){ if(o[keys[i]]) return o[keys[i]]; }
+    return "";
+  }
+
+  // ============================================================
+  // FILE UPLOAD
+  // ============================================================
+  var drop = $("drop"), file = $("file");
+  drop.addEventListener("click", () => file.click());
+  file.addEventListener("change", e => { if(e.target.files[0]) load(e.target.files[0]); e.target.value = ""; });
+  drop.addEventListener("dragover", e => { e.preventDefault(); drop.classList.add("drag"); });
+  drop.addEventListener("dragleave", () => drop.classList.remove("drag"));
+  drop.addEventListener("drop", e => {
+    e.preventDefault(); drop.classList.remove("drag");
+    if(e.dataTransfer.files[0]) load(e.dataTransfer.files[0]);
+  });
+
+  function load(f){
+    if(!/\.(csv|txt)$/i.test(f.name)){
+      showStatus("err", "❌ File harus .csv atau .txt. Untuk XLSX: Save As → CSV UTF-8 dulu.");
+      return;
+    }
+    var r = new FileReader();
+    r.onload = e => process(e.target.result, f.name);
+    r.onerror = () => showStatus("err", "❌ Gagal baca file");
+    r.readAsText(f);
+  }
+
+  function process(text, fname){
+    var rows = toObjects(text);
+    if(!rows.length){ showStatus("err", "❌ CSV kosong atau format header salah"); return; }
+    var events = [];
+    rows.forEach(r => {
+      var vid = pick(r, ["videoid","video_id","vid","id"]);
+      var chat = pick(r, ["url_chat","urlchat","chat_url"]);
+      var title = pick(r, ["title","judul","name"]);
+      var date = pick(r, ["date","tanggal"]);
+      var time = pick(r, ["time","jam","waktu"]);
+      if(!vid) return;
+      if(!chat) chat = "https://www.youtube.com/live_chat?v=" + vid + "&is_popout=1";
+      events.push({ videoId: vid, chatUrl: chat, title: title || vid, date: date, time: time });
+    });
+    if(!events.length){ showStatus("err", "❌ Tidak ada baris dengan kolom videoId"); return; }
+    state.events = events;
+    showStatus("ok", "✅ " + fname + " — " + events.length + " event siap diproses");
+    $("step3").style.display = "block";
+    $("step4").style.display = "block";
+    $("step5").style.display = "block";
+    renderComments();
+    updateStats();
+    $("step3").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function showStatus(type, msg){
+    var s = $("status");
+    s.className = "status " + type;
+    s.textContent = msg;
+  }
+
+  function esc(s){
+    return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  }
+
+  // ============================================================
+  // KOMENTAR COUNT
+  // ============================================================
+  var cmtCountEl = $("cmtCount");
+  function setCount(n){
+    n = Math.max(1, Math.min(20, n));
+    cmtCountEl.value = n;
+    var old = state.comments.slice();
+    state.comments = [];
+    for(var i=0; i<n; i++) state.comments.push(old[i] || "");
+    renderComments();
+    updateStats();
+  }
+  $("numMinus").addEventListener("click", () => setCount(parseInt(cmtCountEl.value, 10) - 1));
+  $("numPlus").addEventListener("click", () => setCount(parseInt(cmtCountEl.value, 10) + 1));
+
+  function renderComments(){
+    var html = "";
+    state.comments.forEach((cmt, i) => {
+      html += '<div class="cmt">';
+      html += '  <div class="cmt-head">';
+      html += '    <span class="cmt-num">Komentar #' + (i+1) + '</span>';
+      html += '    <span class="cmt-len">' + cmt.length + ' karakter</span>';
+      html += '  </div>';
+      html += '  <textarea data-cmt="' + i + '" placeholder="Tulis pesan komentar ke-' + (i+1) + '..." maxlength="200">' + esc(cmt) + '</textarea>';
+      html += '  <div class="cmt-var">Variabel: {title} {date} {time} {videoId}</div>';
+      html += '</div>';
+    });
+    $("commentsList").innerHTML = html;
+    attachCommentHandlers();
+  }
+
+  function attachCommentHandlers(){
+    document.querySelectorAll(".cmt textarea").forEach(ta => {
+      ta.addEventListener("input", () => {
+        var i = parseInt(ta.getAttribute("data-cmt"), 10);
+        state.comments[i] = ta.value;
+        var len = ta.closest(".cmt").querySelector(".cmt-len");
+        if(len) len.textContent = ta.value.length + " karakter";
+        updateStats();
+      });
+      ta.style.height = "auto";
+      ta.style.height = Math.max(50, Math.min(ta.scrollHeight, 150)) + "px";
+    });
+  }
+
+  var lastFocused = null;
+  document.addEventListener("focusin", e => {
+    if(e.target && e.target.matches && e.target.matches(".cmt textarea")) lastFocused = e.target;
+  });
+  document.querySelectorAll(".var-btn").forEach(b => {
+    b.addEventListener("click", () => {
+      var v = b.getAttribute("data-var");
+      var ta = lastFocused || document.querySelector(".cmt textarea");
+      if(!ta) return;
+      var s = ta.selectionStart || 0, e = ta.selectionEnd || 0;
+      ta.value = ta.value.slice(0, s) + v + ta.value.slice(e);
+      ta.focus();
+      ta.selectionStart = ta.selectionEnd = s + v.length;
+      ta.dispatchEvent(new Event("input"));
+    });
+  });
+
+  // ============================================================
+  // STATS
+  // ============================================================
+  function applyTpl(tpl, ev){
+    return tpl
+      .replace(/\{title\}/g, ev.title || "")
+      .replace(/\{date\}/g, ev.date || "")
+      .replace(/\{time\}/g, ev.time || "")
+      .replace(/\{videoId\}/g, ev.videoId || "");
+  }
+
+  function updateStats(){
+    var filled = state.comments.filter(c => c.trim()).length;
+    var total = filled * state.events.length;
+    var delay = parseInt($("delay").value || 10, 10);
+    var totalSec = total * delay;
+    var totalMin = Math.round(totalSec / 60);
+
+    $("statEvents").textContent = state.events.length;
+    $("statComments").textContent = filled;
+    $("statTotal").textContent = total;
+    if(totalMin >= 60){
+      $("statTime").textContent = Math.floor(totalMin / 60) + "h " + (totalMin % 60) + "m";
+    } else {
+      $("statTime").textContent = totalMin + "m";
+    }
+    $("statRate").textContent = delay > 0 ? Math.round(60 / delay) + "/m" : "0/m";
+    var scriptEstimate = total * 250 + state.events.length * 150;
+    $("statSize").textContent = Math.round(scriptEstimate / 1024) + " KB";
+
+    $("sumEvents").textContent = state.events.length;
+    $("sumComments").textContent = filled;
+    $("sumTotal").textContent = total;
+    $("sumDelay").textContent = delay + "s";
+    $("sumTime").textContent = totalMin >= 60
+      ? Math.floor(totalMin/60) + " jam " + (totalMin%60) + " menit"
+      : totalMin + " menit";
+    $("totalEvents2").textContent = state.events.length;
+
+    var w = "";
+    if(total > 2000){
+      w = '<div class="info err">⛔ <b>' + total + ' pesan terlalu banyak.</b> Risiko: rate-limit YouTube, HP overheat, browser crash. Bagi jadi beberapa batch.</div>';
+    } else if(total > 800){
+      w = '<div class="info warn">⚠️ <b>' + total + ' pesan.</b> Butuh colok charger, jangan lock layar. Estimasi ' + totalMin + ' menit.</div>';
+    } else if(total > 0){
+      w = '<div class="info ok">✓ ' + total + ' pesan aman. Estimasi ' + totalMin + ' menit.</div>';
+    }
+    $("warningBox").innerHTML = w;
+
+    renderPreview();
+  }
+
+  $("delay").addEventListener("input", updateStats);
+
+  function renderPreview(){
+    var list = $("eventPreviewMini");
+    var total = state.events.length;
+    var show = Math.min(total, 10);
+    var html = "";
+    for(var i=0; i<show; i++){
+      var ev = state.events[i];
+      html += '<div class="ev-mini"><b>' + (i+1) + '.</b> ' + esc(ev.title.slice(0, 25)) + (ev.title.length > 25 ? '…' : '') + '</div>';
+    }
+    if(total > 10){
+      html += '<div class="ev-mini" style="color:var(--red);border-color:rgba(255,0,0,.3);font-weight:700">+' + (total - 10) + ' lagi</div>';
+    }
+    list.innerHTML = html;
+  }
+
+  // ============================================================
+  // GENERATE
+  // ============================================================
+  $("btnGen").addEventListener("click", () => {
+    if(!state.events.length){ alert("Upload CSV dulu"); return; }
+    var filledCmts = state.comments.map(c => c.trim()).filter(c => c.length);
+    if(!filledCmts.length){ alert("Isi minimal 1 komentar"); return; }
+
+    var delay = parseInt($("delay").value || 10, 10);
+    if(delay < 5) delay = 5;
+    var maxWait = parseInt($("maxwait").value || 45, 10);
+    if(maxWait < 10) maxWait = 10;
+
+    // Custom steps
+    var steps = null;
+    var customRaw = $("customSteps").value.trim();
+    if(customRaw){
+      try {
+        var c = JSON.parse(customRaw);
+        if(Array.isArray(c) && c.length){
+          steps = c;
+        }
+      } catch(e){
+        if(!confirm("Custom JSON error: " + e.message + "\n\nPakai default?")) return;
+      }
+    }
+
+    var btn = $("btnGen");
+    btn.disabled = true;
+    btn.textContent = "⏳ Generating...";
+
+    setTimeout(() => {
+      try {
+        var rows = [];
+        state.events.forEach(ev => {
+          filledCmts.forEach(cmtTpl => {
+            rows.push({
+              videoId: ev.videoId,
+              chatUrl: ev.chatUrl,
+              title: ev.title,
+              message: applyTpl(cmtTpl, ev)
+            });
+          });
+        });
+
+        var script = buildScript(rows, { delay, maxWait }, steps);
+        $("out").textContent = script;
+        $("out").style.display = "block";
+        $("actions").style.display = "grid";
+        $("genInfo").className = "status ok";
+        $("genInfo").textContent = "✅ " + rows.length + " komentar" + (steps ? " (custom steps)" : " (default steps)") + ". Ukuran: " + Math.round(script.length / 1024) + " KB.";
+        $("out").scrollIntoView({ behavior: "smooth", block: "start" });
+      } catch(e){
+        alert("Error: " + e.message);
+      }
+      btn.disabled = false;
+      btn.textContent = "⚡ GENERATE PLAYER SCRIPT";
+    }, 100);
+  });
+
+  $("btnCopy").addEventListener("click", async () => {
+    var txt = $("out").textContent;
+    if(!txt || txt.includes("Belum")){ alert("Generate dulu"); return; }
+    try {
+      await navigator.clipboard.writeText(txt);
+      var b = $("btnCopy"), old = b.textContent;
+      b.textContent = "✅ TERSALIN!";
+      setTimeout(() => b.textContent = old, 1800);
+    } catch(e){
+      var range = document.createRange();
+      range.selectNodeContents($("out"));
+      var sel = window.getSelection();
+      sel.removeAllRanges(); sel.addRange(range);
+      alert("Script ter-select. Tekan lama → Copy.");
+    }
+  });
+
+  $("btnSave").addEventListener("click", () => {
+    var txt = $("out").textContent;
+    if(!txt || txt.includes("Belum")){ alert("Generate dulu"); return; }
+    var blob = new Blob([txt], { type: "text/javascript;charset=utf-8" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "JHYT_PLAYER_" + Date.now() + ".user.js";
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  });
+
+  // ============================================================
+  // SCRIPT BUILDER (PLAYER)
+  // ============================================================
+  function buildScript(rows, cfg, customSteps){
+    var rowsJSON = JSON.stringify(rows);
+    var stepsJSON = customSteps ? JSON.stringify(customSteps) : 'null';
+    var L = [];
+    L.push('// ==UserScript==');
+    L.push('// @name         JHYT PLAYER');
+    L.push('// @namespace    jhyt-player');
+    L.push('// @version      9.7');
+    L.push('// @description  Auto chat YouTube Live');
+    L.push('// @match        *://*.youtube.com/*');
+    L.push('// @match        *://youtube.com/*');
+    L.push('// @grant        none');
+    L.push('// @run-at       document-idle');
+    L.push('// @noframes');
+    L.push('// ==/UserScript==');
+    L.push('');
+    L.push('(function(){');
+    L.push('"use strict";');
+    L.push('var LS_STATE = "jhyt_v97_state";');
+    L.push('var DELAY = ' + cfg.delay + ';');
+    L.push('var MAX_WAIT = ' + cfg.maxWait + ';');
+    L.push('var VERIFY_WAIT = 4;');
+    L.push('var ROWS = ' + rowsJSON + ';');
+    L.push('var TOTAL = ROWS.length;');
+    L.push('var CUSTOM_STEPS = ' + stepsJSON + ';');
+    L.push('var sleep = function(m){ return new Promise(function(r){ setTimeout(r, m); }); };');
+    L.push('');
+    L.push('function loadState(){');
+    L.push('  try{ var r=localStorage.getItem(LS_STATE); var s=r?JSON.parse(r):null;');
+    L.push('    if(s && s.sent && typeof s.sent === "object") return s;');
+    L.push('    return { sent: {}, done: 0, startTime: 0 };');
+    L.push('  } catch(e){ return { sent: {}, done: 0, startTime: 0 }; }');
+    L.push('}');
+    L.push('function saveState(){');
+    L.push('  try{');
+    L.push('    ST.done = 0;');
+    L.push('    for(var k in ST.sent){ if(ST.sent[k] === true) ST.done++; }');
+    L.push('    localStorage.setItem(LS_STATE, JSON.stringify(ST));');
+    L.push('  }catch(e){}');
+    L.push('}');
+    L.push('var ST = loadState();');
+    L.push('');
+    L.push('function el(t,s,x){ var e=document.createElement(t); if(s) e.style.cssText=s; if(x!==undefined) e.textContent=x; return e; }');
+    L.push('function isVisible(e){ if(!e||!e.isConnected) return false; var s=window.getComputedStyle(e); return s.display!=="none" && s.visibility!=="hidden"; }');
+    L.push('function inOwnUI(n){ if(!n) return false; while(n){ if(n.id==="jhyt-ui") return true; n=n.parentNode||(n.host?n.host:null); } return false; }');
+    L.push('function findInput(){');
+    L.push('  var sels = [\'div#input[contenteditable="true"]\', \'div#input[contenteditable=""]\', \'div#input\', \'yt-live-chat-message-input-renderer [contenteditable]\', \'[contenteditable="true"]\'];');
+    L.push('  for(var i=0;i<sels.length;i++){ try{ var list=document.querySelectorAll(sels[i]); for(var j=0;j<list.length;j++){ var e=list[j]; if(!e.isConnected) continue; if(inOwnUI(e)) continue; if(e.closest && e.closest("svg")) continue; if(e.tagName==="DIV" && e.id==="input") return e; if(e.closest && e.closest("yt-live-chat-message-input-renderer")) return e; } }catch(err){} }');
+    L.push('  var inp = document.querySelector("div#input");');
+    L.push('  if(inp && !inp.closest("svg")) return inp;');
+    L.push('  return null;');
+    L.push('}');
+    L.push('function findSend(){');
+    L.push('  var sels = [\'yt-live-chat-message-input-renderer #send-button button\', \'yt-live-chat-message-input-renderer #send-button\', \'#send-button button\', \'#send-button\', \'button[aria-label*="Send"]\', \'button[aria-label*="Kirim"]\'];');
+    L.push('  for(var i=0;i<sels.length;i++){ try{ var list=document.querySelectorAll(sels[i]); for(var j=0;j<list.length;j++){ if(isVisible(list[j]) && !list[j].closest("svg")) return list[j]; } }catch(err){} }');
+    L.push('  return null;');
+    L.push('}');
+    L.push('async function clearInput(e){');
+    L.push('  e.focus();');
+    L.push('  try{ var r=document.createRange(); r.selectNodeContents(e); var s=window.getSelection(); s.removeAllRanges(); s.addRange(r); document.execCommand("delete",false,null); }catch(err){}');
+    L.push('  try{ e.textContent=""; }catch(err){}');
+    L.push('  await sleep(200);');
+    L.push('}');
+    L.push('async function typeInto(e, text){');
+    L.push('  var one = String(text).replace(/\\s*\\n\\s*/g," ").trim();');
+    L.push('  await clearInput(e);');
+    L.push('  try{ e.textContent=one; e.dispatchEvent(new InputEvent("input",{bubbles:true,inputType:"insertText",data:one})); e.dispatchEvent(new Event("change",{bubbles:true})); }');
+    L.push('  catch(err){ e.textContent=one; e.dispatchEvent(new Event("input",{bubbles:true})); }');
+    L.push('  await sleep(600);');
+    L.push('}');
+    L.push('async function clickSend(){');
+    L.push('  var b = findSend();');
+    L.push('  if(b){ try{ b.click(); return true; }catch(err){} }');
+    L.push('  var i = findInput();');
+    L.push('  if(i){ i.focus(); i.dispatchEvent(new KeyboardEvent("keydown",{key:"Enter",code:"Enter",keyCode:13,which:13,bubbles:true,cancelable:true})); return true; }');
+    L.push('  return false;');
+    L.push('}');
+    L.push('function extractVid(url){ if(!url) return null; var m=url.match(/[?&]v=([A-Za-z0-9_-]{11})/); return m?m[1]:null; }');
+    L.push('function nextUnsent(){ for(var i=0;i<ROWS.length;i++){ if(ST.sent[i] !== true) return i; } return -1; }');
+    L.push('function navTo(i){ if(i<0) return; var r=ROWS[i]; if(!r) return; setTimeout(function(){ location.href=r.chatUrl; }, 500); }');
+    L.push('');
+    L.push('var panel=null, statusEl=null, progEl=null, statEl=null, LOCK=false, PAUSED=false;');
+    L.push('function fmtTime(sec){');
+    L.push('  if(sec < 60) return Math.round(sec) + "s";');
+    L.push('  if(sec < 3600) return Math.floor(sec/60) + "m " + Math.round(sec%60) + "s";');
+    L.push('  return Math.floor(sec/3600) + "h " + Math.floor((sec%3600)/60) + "m";');
+    L.push('}');
+    L.push('function updateUI(m){');
+    L.push('  if(statusEl) statusEl.textContent = m;');
+    L.push('  if(progEl){');
+    L.push('    var d = 0; for(var k in ST.sent){ if(ST.sent[k] === true) d++; }');
+    L.push('    progEl.textContent = d + "/" + TOTAL;');
+    L.push('  }');
+    L.push('  if(statEl && ST.startTime){');
+    L.push('    var elapsed = (Date.now() - ST.startTime) / 1000;');
+    L.push('    var done = 0; for(var k2 in ST.sent){ if(ST.sent[k2] === true) done++; }');
+    L.push('    if(done > 0){');
+    L.push('      var eta = (elapsed / done) * (TOTAL - done);');
+    L.push('      statEl.textContent = "⏱ " + fmtTime(elapsed) + " • ETA " + fmtTime(eta);');
+    L.push('    } else {');
+    L.push('      statEl.textContent = "⏱ " + fmtTime(elapsed);');
+    L.push('    }');
+    L.push('  }');
+    L.push('}');
+    L.push('');
+    L.push('function makeUI(){');
+    L.push('  if(document.getElementById("jhyt-ui")){ panel=document.getElementById("jhyt-ui"); statusEl=document.getElementById("jhyt-status"); progEl=document.getElementById("jhyt-progress"); statEl=document.getElementById("jhyt-stat"); return; }');
+    L.push('  if(!document.body) return;');
+    L.push('  panel = el("div","position:fixed;right:12px;bottom:80px;z-index:999999;background:#141414;border:2px solid #ff0000;border-radius:12px;width:290px;max-width:82vw;color:#fff;font-family:-apple-system,sans-serif;font-size:12px;box-shadow:0 8px 24px rgba(0,0,0,.5);");');
+    L.push('  panel.id = "jhyt-ui";');
+    L.push('  var h = el("div","padding:8px 10px;background:#1a1a1a;border-radius:12px 12px 0 0;display:flex;justify-content:space-between;align-items:center;cursor:grab;touch-action:none;user-select:none;");');
+    L.push('  h.appendChild(el("b","font-size:11px","📢 JHYT PLAYER"));');
+    L.push('  h.appendChild(el("span","font-size:9px;color:#22c55e;font-weight:800;","v9.7"));');
+    L.push('  panel.appendChild(h);');
+    L.push('  var body = el("div","padding:10px");');
+    L.push('  var pr = el("div","font-size:11px;color:#aaa;display:flex;justify-content:space-between;");');
+    L.push('  pr.appendChild(el("span","","Progress:"));');
+    L.push('  progEl = el("b","font-size:12px;color:#fff;","0/"+TOTAL);');
+    L.push('  progEl.id = "jhyt-progress";');
+    L.push('  pr.appendChild(progEl);');
+    L.push('  body.appendChild(pr);');
+    L.push('  statEl = el("div","font-size:9.5px;color:#666;margin-top:3px;","⏱ --");');
+    L.push('  statEl.id = "jhyt-stat";');
+    L.push('  body.appendChild(statEl);');
+    L.push('  statusEl = el("div","font-size:10px;color:#0ea5e9;margin-top:8px;min-height:14px;word-break:break-word;","Siap. Klik PLAY.");');
+    L.push('  statusEl.id = "jhyt-status";');
+    L.push('  body.appendChild(statusEl);');
+    L.push('  var pb = el("button","width:100%;margin-top:10px;padding:12px;background:linear-gradient(135deg,#ff0000,#a00);color:#fff;border:0;border-radius:8px;font-weight:800;cursor:pointer;font-size:13px;","▶ PLAY " + TOTAL + " PESAN");');
+    L.push('  body.appendChild(pb);');
+    L.push('  var row = el("div","display:flex;gap:4px;margin-top:6px;");');
+    L.push('  var pbBtn = el("button","flex:1;padding:7px;background:#222;color:#7dd3fc;border:1px solid #333;border-radius:6px;font-size:10px;cursor:pointer;font-weight:700;","⏸ PAUSE");');
+    L.push('  var rb = el("button","flex:1;padding:7px;background:#222;color:#fca5a5;border:1px solid #333;border-radius:6px;font-size:10px;cursor:pointer;","RESET");');
+    L.push('  var cb = el("button","padding:7px 12px;background:#222;color:#fff;border:1px solid #333;border-radius:6px;font-size:10px;cursor:pointer;","X");');
+    L.push('  row.appendChild(pbBtn); row.appendChild(rb); row.appendChild(cb);');
+    L.push('  body.appendChild(row);');
+    L.push('  panel.appendChild(body);');
+    L.push('  document.body.appendChild(panel);');
+    L.push('  var drag=false,sx=0,sy=0,sl=0,st=0;');
+    L.push('  h.addEventListener("pointerdown",function(e){ if(e.target.tagName==="BUTTON") return; drag=true; sx=e.clientX; sy=e.clientY; var r=panel.getBoundingClientRect(); sl=r.left; st=r.top; try{ h.setPointerCapture(e.pointerId); }catch(err){} e.preventDefault(); });');
+    L.push('  h.addEventListener("pointermove",function(e){ if(!drag) return; panel.style.left=(sl+e.clientX-sx)+"px"; panel.style.top=(st+e.clientY-sy)+"px"; panel.style.right="auto"; panel.style.bottom="auto"; });');
+    L.push('  h.addEventListener("pointerup",function(){ drag=false; });');
+    L.push('  h.addEventListener("pointercancel",function(){ drag=false; });');
+    L.push('  cb.onclick = function(){ LOCK=true; PAUSED=false; panel.remove(); panel=null; };');
+    L.push('  pbBtn.onclick = function(){');
+    L.push('    PAUSED = !PAUSED;');
+    L.push('    pbBtn.textContent = PAUSED ? "▶ RESUME" : "⏸ PAUSE";');
+    L.push('    pbBtn.style.color = PAUSED ? "#86efac" : "#7dd3fc";');
+    L.push('    updateUI(PAUSED ? "⏸ Dijeda. Klik RESUME untuk lanjut." : "▶ Dilanjutkan...");');
+    L.push('  };');
+    L.push('  rb.onclick = function(){');
+    L.push('    if(!confirm("Reset progress?")) return;');
+    L.push('    ST = { sent: {}, done: 0, startTime: 0 };');
+    L.push('    saveState();');
+    L.push('    updateUI("Reset selesai.");');
+    L.push('  };');
+    L.push('  pb.onclick = async function(){');
+    L.push('    if(LOCK) return;');
+    L.push('    var idx = nextUnsent();');
+    L.push('    if(idx === -1){ updateUI("Semua sudah terkirim. Klik RESET untuk ulang."); return; }');
+    L.push('    ST.startTime = ST.startTime || Date.now();');
+    L.push('    saveState();');
+    L.push('    var vid = extractVid(location.href);');
+    L.push('    if(vid && vid === ROWS[idx].videoId){ await processOne(idx); }');
+    L.push('    else { updateUI("Navigasi ke chat " + (idx+1) + "..."); navTo(idx); }');
+    L.push('  };');
+    L.push('  updateUI("Siap. Klik PLAY.");');
+    L.push('}');
+    L.push('');
+    L.push('async function processOne(idx){');
+    L.push('  if(LOCK) return;');
+    L.push('  if(PAUSED) return;');
+    L.push('  if(ST.sent[idx] === "processing") return;');
+    L.push('  if(ST.sent[idx] === true) return;');
+    L.push('  ST.sent[idx] = "processing"; saveState();');
+    L.push('  updateUI("Menunggu input...");');
+    L.push('  var s = Date.now(), inp = null;');
+    L.push('  while(Date.now() - s < MAX_WAIT*1000){');
+    L.push('    if(LOCK || PAUSED){ delete ST.sent[idx]; saveState(); return; }');
+    L.push('    inp = findInput(); if(inp) break; await sleep(500);');
+    L.push('  }');
+    L.push('  if(!inp){');
+    L.push('    updateUI("✗ Input tidak muncul - skip");');
+    L.push('    delete ST.sent[idx]; saveState();');
+    L.push('    await sleep(2000);');
+    L.push('    var n = nextUnsent();');
+    L.push('    if(n === -1){ updateUI("Selesai."); return; }');
+    L.push('    navTo(n); return;');
+    L.push('  }');
+    L.push('  updateUI("Ketik: " + ROWS[idx].message.slice(0,22) + "...");');
+    L.push('  await typeInto(inp, ROWS[idx].message);');
+    L.push('  await sleep(500);');
+    L.push('  if(LOCK || PAUSED){ delete ST.sent[idx]; saveState(); return; }');
+    L.push('  updateUI("Klik Send...");');
+    L.push('  var sent = await clickSend();');
+    L.push('  if(!sent){');
+    L.push('    updateUI("✗ Gagal klik Send");');
+    L.push('    delete ST.sent[idx]; saveState();');
+    L.push('    await sleep(2000);');
+    L.push('    var n2 = nextUnsent();');
+    L.push('    if(n2 === -1){ updateUI("Selesai."); return; }');
+    L.push('    navTo(n2); return;');
+    L.push('  }');
+    L.push('  ST.sent[idx] = true; saveState();');
+    L.push('  await sleep(VERIFY_WAIT*1000);');
+    L.push('  updateUI("✓ " + ROWS[idx].message.slice(0,25));');
+    L.push('  if(LOCK || PAUSED) return;');
+    L.push('  var nx = nextUnsent();');
+    L.push('  if(nx === -1){ updateUI("🎉 Semua selesai!"); return; }');
+    L.push('  var currentVid = extractVid(location.href);');
+    L.push('  var countdown = DELAY;');
+    L.push('  while(countdown > 0 && !LOCK && !PAUSED){');
+    L.push('    updateUI((ROWS[nx].videoId === currentVid ? "Komentar berikutnya " : "Pindah chat ") + countdown + "s...");');
+    L.push('    await sleep(1000);');
+    L.push('    countdown--;');
+    L.push('  }');
+    L.push('  if(LOCK || PAUSED) return;');
+    L.push('  if(ROWS[nx].videoId === currentVid){');
+    L.push('    await processOne(nx);');
+    L.push('  } else {');
+    L.push('    navTo(nx);');
+    L.push('  }');
+    L.push('}');
+    L.push('');
+    L.push('function boot(){');
+    L.push('  makeUI();');
+    L.push('  if(!ST.startTime){ ST.startTime = Date.now(); saveState(); }');
+    L.push('  var vid = extractVid(location.href);');
+    L.push('  if(vid){');
+    L.push('    for(var i=0;i<ROWS.length;i++){');
+    L.push('      if(ROWS[i].videoId === vid && ST.sent[i] !== true){');
+    L.push('        if(ST.sent[i] === "processing"){ delete ST.sent[i]; saveState(); }');
+    L.push('        setTimeout(function(){ processOne(i); }, 2500);');
+    L.push('        break;');
+    L.push('      }');
+    L.push('    }');
+    L.push('  }');
+    L.push('}');
+    L.push('if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);');
+    L.push('else boot();');
+    L.push('setTimeout(boot, 1000);');
+    L.push('setTimeout(boot, 3000);');
+    L.push('setInterval(function(){ if(panel) updateUI(statusEl ? statusEl.textContent : ""); }, 5000);');
+    L.push('console.log("[JHYT PLAYER v9.7] Ready -", TOTAL, "komentar");');
+    L.push('})();');
+    return L.join("\n");
+  }
+
+  console.log("JHYT Generator v7 ready");
+})();
+</script>
+</body>
+</html>
